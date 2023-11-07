@@ -20,10 +20,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
       - name: Import Certificates
-      uses: apple-actions/import-codesign-certs@v2
-      with: 
-        p12-file-base64: ${{ secrets.CERTIFICATES_P12 }}
-        p12-password: ${{ secrets.CERTIFICATES_P12_PASSWORD }}
+        uses: apple-actions/import-codesign-certs@v2
+        with: 
+          p12-file-base64: ${{ secrets.CERTIFICATES_P12 }}
+          p12-password: ${{ secrets.CERTIFICATES_P12_PASSWORD }}
       - name: Install App Store Profile
         uses: akiojin/install-provisioning-profile-github-action@v1.0
         with:
