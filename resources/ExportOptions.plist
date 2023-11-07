@@ -11,10 +11,10 @@
 	<key>provisioningProfiles</key>
 	<dict>
 		<key>com.vfrascello.actionsdemodev</key>
-		<string>ActionsDemo 1</string>
+		<string>ActionsDemoAppStore</string>
 	</dict>
 	<key>signingCertificate</key>
-	<string>9D6146049145246C8EF5B29D7ACA6B6D7B932EF6</string>
+	<string>850982521C3B963FC5FF6D8F8354D1399B7AA027</string>
 	<key>signingStyle</key>
 	<string>manual</string>
 	<key>stripSwiftSymbols</key>
