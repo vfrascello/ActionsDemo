@@ -38,7 +38,7 @@ jobs:
           echo "TYPE=$filetype_parameter" >> $GITHUB_ENV
           echo "FILE_TO_BUILD=$file_to_build" >> $GITHUB_ENV
       - name: Build and Archive
-        uses: sersoft-gmbh/xcodebuild-action@v2
+        uses: sersoft-gmbh/xcodebuild-action@v3
         with:
           action: archive
           ${{ env.TYPE }}: ${{ env.FILE_TO_BUILD }}
