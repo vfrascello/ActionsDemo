@@ -2,6 +2,19 @@ name: Archive and Upload
 
 on:
   workflow_dispatch:
+    inputs:
+      configuration: 
+        description: 'Configuration (default: Release)'
+        required: true
+        default: 'Release'
+      scheme: 
+        description: 'The scheme to archive.'
+        required: true
+        default: 'ActionsDemo'
+      project: 
+        description: 'The project to archive.'
+        required: true
+        default: 'ActionsDemo'
 
 concurrency:
   # Ensure only archive one at a time.
@@ -9,8 +22,8 @@ concurrency:
   #  Cancel any other archives when a duplicate is detected. 
   cancel-in-progress: true
 env:
-  scheme: ${{ 'ActionsDemo' }}
-  project_name: ${{ 'ActionsDemo' }}
+  scheme: ${{ github.event.inputs.SCHEME }}
+  project_name: ${{ github.event.inputs.PROJECT }}
 jobs:
   xcode-archive:
     name: Archive iOS for App Store Release
