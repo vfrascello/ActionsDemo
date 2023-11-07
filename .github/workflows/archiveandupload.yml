@@ -30,7 +30,7 @@ jobs:
           profile-base64: ${{ secrets.APP_STORE_PROVISIONING_PROFILE }}
       - name: Select Xcode
         run: |
-          sudo xcode-select --switch /Applications/Xcode_14.3.1.app
+          sudo xcode-select --switch /Applications/Xcode_15.0.app
       - name: Determine File To Build
         run: |
           if [ "`ls -A | grep -i \\.xcworkspace\$`" ]; then filetype_parameter="workspace" && file_to_build="`ls -A | grep -i \\.xcworkspace\$`"; else filetype_parameter="project" && file_to_build="`ls -A | grep -i \\.xcodeproj\$`"; fi
@@ -40,16 +40,6 @@ jobs:
       - name: Build and Archive
         run: |
           xcodebuild -project ${{ env.FILE_TO_BUILD }} -scheme ${{ env.scheme }} -destination generic/platform=iOS -sdk iphoneos -derivedDataPath build/derivedData -archivePath ${{env.project_name}}.xcarchive archive -verbose
-#        uses: sersoft-gmbh/xcodebuild-action@v3
-#        with:
-#          action: archive
-#          ${{ env.TYPE }}: ${{ env.FILE_TO_BUILD }}
-#          scheme: ${{ env.scheme }}
-#          sdk: iphoneos
-#          build-settings: >
-#            -archivePath ${{env.project_name}}.xcarchive
-#          derived-data-path: build/derivedData
-#          destination: generic/platform=iOS
       - name: Get App Store Connect API Key 
         uses: timheuer/base64-to-file@v1.1
         with:
