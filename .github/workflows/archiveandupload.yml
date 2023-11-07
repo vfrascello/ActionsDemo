@@ -27,7 +27,7 @@ jobs:
       - name: Install Provisioning Profiles 
         uses: dietdoctor/install-ios-provisioning-profile@latest
         with:
-          profile-base64: ${{ secrets.PROVISIONING_PROFILE }}
+          profile-base64: ${{ secrets.APP_STORE_PROVISIONING_PROFILE }}
       - name: Select Xcode
         run: |
           sudo xcode-select --switch /Applications/Xcode_15.0.app
