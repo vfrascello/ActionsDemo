@@ -24,10 +24,10 @@ jobs:
         with: 
           p12-file-base64: ${{ secrets.CERTIFICATES_P12 }}
           p12-password: ${{ secrets.CERTIFICATES_P12_PASSWORD }}
-      - name: Install App Store Profile
-        uses: akiojin/install-provisioning-profile-github-action@v1.0
+      - name: Install Provisioning Profiles 
+        uses: dietdoctor/install-ios-provisioning-profile@latest
         with:
-          base64: ${{ secrets.APPSTORE_PROVISIONING_PROFILE}}
+          profile-base64: ${{ secrets.PROVISIONING_PROFILE }}
       - name: Select Xcode
         run: |
           sudo xcode-select --switch /Applications/Xcode_15.0.app
