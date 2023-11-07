@@ -1,0 +1,40 @@
+name: iOS Build and Test
+
+on: 
+  pull_request:
+    branches:
+      - '**'
+    paths-ignore:
+      - 'README.md'
+      - 'documentation/**'
+      - '.github/workflows/**'
+      - '!.github/workflows/buildandtest.yml'
+concurrency:
+  # Ensure only the latest build of this PR runs.
+  group: ${{ github.ref_name }}
+  #  Cancel any inflight builds when a duplicate is detected.
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build and Test
+    runs-on: self-hosted
+    env:
+        scheme: ${{ 'ActionsDemo' }}
+        platform: ${{ 'iOS Simulator' }}
+        device: ${{ 'iPhone 15 Pro' }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Determine File To Build
+        run: |
+          if [ "`ls -A | grep -i \\.xcworkspace\$`" ]; then filetype_parameter="workspace" && file_to_build="`ls -A | grep -i \\.xcworkspace\$`"; else filetype_parameter="project" && file_to_build="`ls -A | grep -i \\.xcodeproj\$`"; fi
+          file_to_build=`echo $file_to_build | awk '{$1=$1;print}'`
+          echo "TYPE=$filetype_parameter" >> $GITHUB_ENV
+          echo "FILE_TO_BUILD=$file_to_build" >> $GITHUB_ENV
+      - name: Build
+        run: |
+          xcodebuild build-for-testing -scheme "$scheme" -"${{ env.TYPE }}" "${{ env.FILE_TO_BUILD }}" -destination "platform=$platform,name=$device"
+      - name: Test
+        run: |
+          xcodebuild test-without-building -scheme "$scheme" -"$project_type" "$project_name" -destination "platform=$platform,name=$device"

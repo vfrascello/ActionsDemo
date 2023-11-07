@@ -1,0 +1,77 @@
+name: Archive and Upload
+
+on:
+  workflow_dispatch:
+
+concurrency:
+  # Ensure only archive one at a time.
+  group: 'TestFlight'
+  #  Cancel any other archives when a duplicate is detected. 
+  cancel-in-progress: true
+env:
+  scheme: ${{ 'ActionsDemo' }}
+  project_name: ${{ 'ActionsDemo' }}
+jobs:
+  xcode-archive:
+    name: Archive iOS for App Store Release
+    timeout-minutes: 15
+    runs-on: macos-13
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Import Certificates
+        uses: apple-actions/import-codesign-certs@v1
+        id: codesign
+        with:
+          p12-file-base64: ${{ secrets.DISTRIBUTION_CERTIFICATE_P12 }}
+          p12-password: ${{ secrets.DISTRIBUTION_CERTIFICATE_PASSWORD }}
+          keychain: codesign
+      - name: Install App Store Profile
+        uses: akiojin/install-provisioning-profile-github-action@v1.0
+        with:
+          base64: ${{ secrets.APPSTORE_PROVISIONING_PROFILE}}
+      - name: Select Xcode
+        run: |
+          sudo xcode-select --switch /Applications/Xcode_15.0.app
+      - name: Determine File To Build
+        run: |
+          if [ "`ls -A | grep -i \\.xcworkspace\$`" ]; then filetype_parameter="workspace" && file_to_build="`ls -A | grep -i \\.xcworkspace\$`"; else filetype_parameter="project" && file_to_build="`ls -A | grep -i \\.xcodeproj\$`"; fi
+          file_to_build=`echo $file_to_build | awk '{$1=$1;print}'`
+          echo "TYPE=$filetype_parameter" >> $GITHUB_ENV
+          echo "FILE_TO_BUILD=$file_to_build" >> $GITHUB_ENV
+      - name: Build and Archive
+        uses: sersoft-gmbh/xcodebuild-action@v2
+        with:
+          action: archive
+          ${{ env.TYPE }}: ${{ env.FILE_TO_BUILD }}
+          scheme: ${{ env.scheme }}
+          sdk: iphoneos
+          build-settings: >
+            -archivePath ${{env.project_name}}.xcarchive
+          derived-data-path: build/derivedData
+          destination: generic/platform=iOS
+      - name: Get App Store Connect API Key 
+        uses: timheuer/base64-to-file@v1.1
+        with:
+          fileName: AuthKey_${{ secrets.AUTH_KEY_ID }}.p8
+          fileDir: ${{ github.workspace }}/private_keys
+          encodedString: ${{ secrets.AUTH_KEY_P8 }}
+      - name: Export Xcode archive
+        run: |
+          xcodebuild -exportArchive -verbose \
+          -sdk iphoneos \
+          -archivePath ${{ github.workspace }}/${{env.project_name}}.xcarchive  \
+          -exportOptionsPlist ${{ github.workspace }}/resources/ExportOptions.plist \
+          -exportPath ${{ github.workspace }} \
+          -authenticationKeyIssuerID ${{ secrets.AUTH_KEY_ISSUER_ID }} \
+          -authenticationKeyID ${{ secrets.AUTH_KEY_ID }} \
+          -authenticationKeyPath ${{ github.workspace }}/private_keys/AuthKey_${{ secrets.AUTH_KEY_ID }}.p8 \
+      - name: Upload to App Store Connect
+        run: |
+          xcrun altool --upload-app -f ${{ github.workspace }}/${{ env.project_name }}.ipa -t iOS \
+          --apiIssuer ${{ secrets.AUTH_KEY_ISSUER_ID }} --apiKey ${{ secrets.AUTH_KEY_ID }}
+      - name: Cleanup 
+        run: |
+          rm -rf ${{ github.workspace }}/private_keys
+          rm -rf /Users/runner/Library/Keychains/codesign.keychain 
+          rm -rf /Users/runner/Library/Keychains/codesign.keychain-db
