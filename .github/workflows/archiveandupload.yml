@@ -39,7 +39,7 @@ jobs:
           echo "FILE_TO_BUILD=$file_to_build" >> $GITHUB_ENV
       - name: Build and Archive
         run: |
-        xcodebuild -project ${{ env.FILE_TO_BUILD }} -scheme ${{ env.scheme }} -destination generic/platform=iOS -sdk iphoneos -derivedDataPath build/derivedData -archivePath ${{env.project_name}}.xcarchive archive -verbose
+          xcodebuild -project ${{ env.FILE_TO_BUILD }} -scheme ${{ env.scheme }} -destination generic/platform=iOS -sdk iphoneos -derivedDataPath build/derivedData -archivePath ${{env.project_name}}.xcarchive archive -verbose
 #        uses: sersoft-gmbh/xcodebuild-action@v3
 #        with:
 #          action: archive
