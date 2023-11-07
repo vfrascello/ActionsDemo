@@ -38,16 +38,18 @@ jobs:
           echo "TYPE=$filetype_parameter" >> $GITHUB_ENV
           echo "FILE_TO_BUILD=$file_to_build" >> $GITHUB_ENV
       - name: Build and Archive
-        uses: sersoft-gmbh/xcodebuild-action@v3
-        with:
-          action: archive
-          ${{ env.TYPE }}: ${{ env.FILE_TO_BUILD }}
-          scheme: ${{ env.scheme }}
-          sdk: iphoneos
-          build-settings: >
-            -archivePath ${{env.project_name}}.xcarchive
-          derived-data-path: build/derivedData
-          destination: generic/platform=iOS
+        run: |
+        xcodebuild -project ${{ env.FILE_TO_BUILD }} -scheme ${{ env.scheme }} -destination generic/platform=iOS -sdk iphoneos -derivedDataPath build/derivedData -archivePath ${{env.project_name}}.xcarchive archive -verbose
+#        uses: sersoft-gmbh/xcodebuild-action@v3
+#        with:
+#          action: archive
+#          ${{ env.TYPE }}: ${{ env.FILE_TO_BUILD }}
+#          scheme: ${{ env.scheme }}
+#          sdk: iphoneos
+#          build-settings: >
+#            -archivePath ${{env.project_name}}.xcarchive
+#          derived-data-path: build/derivedData
+#          destination: generic/platform=iOS
       - name: Get App Store Connect API Key 
         uses: timheuer/base64-to-file@v1.1
         with:
