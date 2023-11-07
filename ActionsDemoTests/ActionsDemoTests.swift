@@ -22,5 +22,10 @@ final class ActionsDemoTests: XCTestCase {
       let celsiusValueThree: Double = 100
       converter.convert(celsiusValueThree)
       XCTAssertEqual(converter.result, 212.00)
+      
+      // this test will fail
+      let celsiusValueFour: Double = 100
+      converter.convert(celsiusValueFour)
+      XCTAssertEqual(converter.result, 0.00)
     }
 }
