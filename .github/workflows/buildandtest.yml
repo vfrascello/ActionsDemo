@@ -32,6 +32,11 @@ jobs:
           file_to_build=`echo $file_to_build | awk '{$1=$1;print}'`
           echo "TYPE=$filetype_parameter" >> $GITHUB_ENV
           echo "FILE_TO_BUILD=$file_to_build" >> $GITHUB_ENV 
+      - name: Install Development Certificate
+        uses: nickwph/apple-build-certificate-action@v1
+        with:
+          certificate-base64: ${{ secrets.CERTIFICATE_BASE64 }}
+          certificate-password: ${{ secrets.CERTIFICATE_PASSWORD }}
       - name: Install Provisioning Profiles 
         uses: dietdoctor/install-ios-provisioning-profile@latest
         with:
