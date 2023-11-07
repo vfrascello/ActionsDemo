@@ -34,7 +34,7 @@ jobs:
           echo "FILE_TO_BUILD=$file_to_build" >> $GITHUB_ENV
       - name: Build
         run: |
-          xcodebuild build-for-testing -scheme "$scheme" -"${{ env.TYPE }}" "${{ env.FILE_TO_BUILD }}" -destination "platform=$platform,name=$device"
+          xcodebuild build-for-testing -scheme "$scheme" -"${{ env.TYPE }}" "${{ env.FILE_TO_BUILD }}" -destination "platform=$platform,name=$device" -allowProvisioningUpdates
       - name: Test
         run: |
-          xcodebuild test-without-building -scheme "$scheme" -"$project_type" "$project_name" -destination "platform=$platform,name=$device"
+          xcodebuild test-without-building -scheme "$scheme" -"$project_type" "$project_name" -destination "platform=$platform,name=$device" -allowProvisioningUpdates
